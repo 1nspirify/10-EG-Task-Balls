@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 9c134226949ff264c84ebbcb6544fc76
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - _dieEffect: {fileID: 2031947712231836720, guid: 85edcc0f425191f46a383fc8476472a9,
+      type: 3}
+  - _visualTransform: {instanceID: 0}
+  - _stonePrefab: {instanceID: 0}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

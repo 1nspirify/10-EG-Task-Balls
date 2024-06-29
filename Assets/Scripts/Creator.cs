@@ -11,6 +11,11 @@ public class Creator : MonoBehaviour
     private ActiveItem _itemInTube;
     private ActiveItem _itemInSpawner;
 
+    [SerializeField] private Transform _rayTransform;
+    [SerializeField] private LayerMask _layerMask;
+
+
+
     private void Start()
     {
         CreateItemInTube();
@@ -30,21 +35,31 @@ public class Creator : MonoBehaviour
     private IEnumerator MoveToSpawner()
     {
         _itemInTube.transform.parent = _spawner;
-        for (float t = 0; t < 1f; t += Time.deltaTime / 0.3f)
+        for (float t = 0; t < 1f; t += Time.deltaTime / 0.4f)
         {
             _itemInTube.transform.position = Vector3.Lerp(_tube.position, _spawner.position, t);
             yield return null;
         }
         _itemInTube.transform.localPosition = Vector3.zero;
         _itemInSpawner = _itemInTube;
+        _rayTransform.gameObject.SetActive(true);
+        _itemInSpawner.Projection.Show();
         _itemInTube = null;
         CreateItemInTube();
     }
 
-    void Update()
+    void LateUpdate()
     {
         if (_itemInSpawner)
         {
+            Ray ray = new Ray(_spawner.position, Vector3.down);
+            RaycastHit hit;
+            if(Physics.SphereCast(ray,_itemInSpawner.Radius, out hit,100,_layerMask,QueryTriggerInteraction.Ignore)) 
+            {
+                _rayTransform.localScale = new Vector3(_itemInSpawner.Radius*2f, hit.distance, 1f);
+                _itemInSpawner.Projection.SetPosition(_spawner.position +Vector3.down*hit.distance);
+
+            }
             if (Input.GetMouseButtonUp(0))
             {
                 Drop();
@@ -55,7 +70,9 @@ public class Creator : MonoBehaviour
     void Drop()
     {
         _itemInSpawner.Drop();
+        _itemInSpawner.Projection.Hide();
         _itemInSpawner = null;
+        _rayTransform.gameObject.SetActive(false);
         if (_itemInTube)
         {
             StartCoroutine(MoveToSpawner());
